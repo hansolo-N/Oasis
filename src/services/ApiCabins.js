@@ -24,3 +24,15 @@ if(error) {
     throw new Error('cabin could not be deleted!')
 }
 }
+
+export async function createCabin(newCabin){
+    const { data, error } = await supabase
+  .from('cabins')
+  .insert([newCabin])
+
+  if(error) {
+    console.log(error.message)
+    throw new Error('cabin could not be created!')
+}
+return data
+}
