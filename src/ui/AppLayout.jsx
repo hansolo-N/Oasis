@@ -17,6 +17,13 @@ const Main = styled.main `
 padding: 4rem 4.8rem 6.4rem;
 `
 
+const Cotainer = styled.div`
+max-width: 120rem;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 3.2rem
+`
 
 function AppLayout() {
   return (
@@ -24,7 +31,9 @@ function AppLayout() {
       <Header/>
       <Sidebar/>
       <Main>
-        <Outlet/>
+        <Cotainer>
+          <Outlet/>
+        </Cotainer>
       </Main>
 
     </StyledAppLayout>
