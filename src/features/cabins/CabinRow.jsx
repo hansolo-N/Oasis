@@ -1,5 +1,8 @@
 import styled from "styled-components";
-
+import PropTypes from 'prop-types';
+import {formatCurrency} from '../../utils/helpers/'
+import { deleteCabin } from "../../services/ApiCabins";
+import { useMutation } from "@tanstack/react-query";
 
 const TableRow = styled.div`
   display: grid;
@@ -14,7 +17,7 @@ const TableRow = styled.div`
 `;
 
 const Img = styled.img`
-  display: block;
+   display: block;
   width: 6.4rem;
   aspect-ratio: 3 / 2;
   object-fit: cover;
@@ -41,12 +44,26 @@ const Discount = styled.div`
 `;
 
 function CabinRow({cabin}) {
-  console.log(cabin)
+  const {name,maxCapacity,discount,image,regular_price,id:cabinId} = cabin
+
+  const {isLoading:isDeleting,mutate} = useMutation({
+    mutationFn: (id)=>deleteCabin(id),
+  })
+
   return (
     <TableRow role="row">
-
+        <Img src={image} alt=''/>
+        <Cabin>{name}</Cabin>
+        <div>fits up to maxium {maxCapacity} guests</div>
+        <Price>{formatCurrency(regular_price)}</Price>
+        <Discount>{formatCurrency(discount)}</Discount>
+        <button onClick={()=>mutate(cabinId)} disabled={isDeleting}>delete</button>
     </TableRow>
   )
 }
+
+CabinRow.propTypes = {
+  cabin: PropTypes.object
+};
 
 export default CabinRow

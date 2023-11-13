@@ -11,8 +11,7 @@ function Cabins() {
       <p>TEST</p>
     </Row>
 
-    <Row>
-
+    <Row type="horizontal">
       <CabinTable/>
     </Row>
     </>

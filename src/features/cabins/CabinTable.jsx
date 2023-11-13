@@ -34,8 +34,6 @@ function CabinTable() {
     queryKey: ['cabin'],
     queryFn: getCabins
   })
-
-  console.log(cabins)
   if(isLoading) return <Spinner/>
 
   return <Table role="table">
@@ -46,10 +44,8 @@ function CabinTable() {
           <div>Price</div>
           <div>Discount</div>
           <div></div>
-          {cabins.map((cabin)=>(<CabinRow cabin={cabin} key={cabin.id}/>))}
         </TableHeader>
-
-
+        {cabins.map((cabin)=>(<CabinRow cabin={cabin} key={cabin.id}/>))}
   </Table>
 }
 
