@@ -1,3 +1,4 @@
+import { id } from "date-fns/locale";
 import supabase, { supabaseUrl } from "./supabaseClient";
 
 
@@ -27,31 +28,28 @@ if(error) {
 
 export async function createCabin(newCabin){
 
-    const  imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/','')
+    const  imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll("/","")
 
     const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`
 
+
     const { data, error } = await supabase
   .from('cabins')
-  .insert([{...newCabin,image:imagePath}])
+  .insert([ {...newCabin,image:imagePath}])
 
   if(error) {
     console.log(error.message)
     throw new Error('cabin could not be created!')
 }
 
-
+// upload image 
 const avatarFile = newCabin.image
-  const {error:storageError} =await supabase
-  .storage
-  .from('cabin-images')
-  .upload(imageName, avatarFile)
+const {error:storageError} =await supabase.storage.from('cabin-images').upload(imageName, avatarFile)
 
-  //delete cabin if error uploading image/storage error
-  if(storageError){ await supabase
-  .from('cabins')
-  .delete()
-  .eq('id', data.id)
+//   delete cabin if error uploading image/storage error
+  if(storageError)
+  { 
+  await supabase.from('cabins').delete().eq('id',id)
   console.log(storageError)
   throw new Error('cabin image could not be uploaded, cabin was not created!')
     }
