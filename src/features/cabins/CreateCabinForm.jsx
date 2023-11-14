@@ -5,9 +5,8 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditCabin } from "../../services/ApiCabins";
-import toast from "react-hot-toast";
+import { useCreateCabin } from './useCreateCabin';
+import { useEditCabin } from './useEditCabin';
 import FormRow from "../../ui/FormRow";
 
 
@@ -18,7 +17,7 @@ function CreateCabinForm({cabinToEdit={}}) {
 
   const isEditSession = Boolean(editId)
 
-  const {register,handleSubmit,reset,getValues,formState} = useForm(
+  const {register,handleSubmit,getValues,formState,reset} = useForm(
     {
       defaultValues: isEditSession ? editValues : {}
     }
@@ -26,33 +25,21 @@ function CreateCabinForm({cabinToEdit={}}) {
 
   const {errors} = formState
 
-  const queryClient = useQueryClient()
+  const {creatingCabin,createCabin} = useCreateCabin()
 
-  const {isLoading:creatingCabin,mutate:createCabin} = useMutation({
-    mutationFn: (newCabin)=>createEditCabin(newCabin),
-    onSuccess: ()=>{
-      toast.success('cabin created successfully')
-      queryClient.invalidateQueries({
-        queryKey:['cabins']
-      })
-      reset()
-    },
-    onError: err=>toast.error(err.message)
-  })
+  const {isEditing,editCabin} = useEditCabin()
 
-
-
-  const {isLoading:isEditing,mutate:editCabin} = useMutation({
-    mutationFn: ({newCabinData,id})=>createEditCabin(newCabinData,id),
-    onSuccess: ()=>{
-      toast.success('successfully Edited Cabon details')
-      queryClient.invalidateQueries({
-        queryKey:['cabins']
-      })
-      reset()
-    },
-    onError: err=>toast.error(err.message)
-  })
+  // const {isLoading:isEditing,mutate:editCabin} = useMutation({
+  //   mutationFn: ({newCabinData,id})=>createEditCabin(newCabinData,id),
+  //   onSuccess: ()=>{
+  //     toast.success('successfully Edited Cabon details')
+  //     queryClient.invalidateQueries({
+  //       queryKey:['cabins']
+  //     })
+  //     reset()
+  //   },
+  //   onError: err=>toast.error(err.message)
+  // })
 
 
   const isWorking = isEditing || creatingCabin
@@ -63,7 +50,9 @@ function CreateCabinForm({cabinToEdit={}}) {
 
     if(isEditSession) editCabin({newCabinData:{...data,image},id:editId})
 
-    else createCabin({...data,image: image})
+    else createCabin({...data,image: image},{onSuccess:()=>{
+      reset()
+    }})
     }
 
     function onError(errors){
@@ -100,7 +89,7 @@ function CreateCabinForm({cabinToEdit={}}) {
       </FormRow>
 
       <FormRow label='description for the website' error= {errors?.description?.message}>
-        <Textarea type="number" id="description" defaultValue="" disabled={isWorking} {...register('description',{
+        <Textarea type="number" id="description" defaultValue=""  {...register('description',{
           required: "this field is required"
         })}/>
       </FormRow>
