@@ -7,8 +7,10 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -66,7 +68,7 @@ function Modal({ children }) {
 
   const close = () => setOpenName("");
 
-  const open = () => setOpenName;
+  const open = setOpenName;
 
   return (
     <ModalContext.Provider value={{ openName, close, open }}>
@@ -84,25 +86,19 @@ function Open({ children, opens: opensWindowName }) {
 function Window({ children, name }) {
   const { openName, close } = useContext(ModalContext);
 
+  const ref = useOutsideClick({ close });
+
   if (name !== openName) {
     return null;
   }
 
-  useEffect(function () {
-    function handleClick(e) {}
-
-    document.addEventListener("click", handleClick);
-
-    return () => document.removeEventListener("click", handleClick);
-  }, []);
-
   return createPortal(
     <Overlay>
-      <StyledModal>
+      <StyledModal ref={ref}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
-        <div>{children}</div>
+        <div>{cloneElement(children, { onCloseModal: close })}</div>
       </StyledModal>
     </Overlay>,
     document.body
@@ -113,12 +109,12 @@ Modal.Open = Open;
 Modal.Window = Window;
 
 Modal.propTypes = {
-  children: PropTypes.array,
+  children: PropTypes.any,
   onClose: PropTypes.any,
 };
 
 Window.propTypes = {
-  children: PropTypes.object,
+  children: PropTypes.any,
   name: PropTypes.string,
 };
 
