@@ -1,11 +1,12 @@
-import React from 'react'
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import React from "react";
+import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const StyledFormRow = styled.div`
   display: grid;
   align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
+  justify-content: center;
+  grid-template-columns: 24rem;
   gap: 2.4rem;
 
   padding: 1.2rem 0;
@@ -24,7 +25,7 @@ const StyledFormRow = styled.div`
 
   &:has(button) {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 1.2rem;
   }
 `;
@@ -38,27 +39,21 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-
-function FormRow({label,error,children}) {
+function FormRow({ label, error, children }) {
   return (
     <StyledFormRow>
-    {label && <Label htmlFor={children.props.id}>{label}</Label>}
-    {children}
-    {<Error>{error}</Error>}
-  </StyledFormRow>
-  )
+      {label && <Label htmlFor={children.props.id}>{label}</Label>}
+      {children}
+      {<Error>{error}</Error>}
+    </StyledFormRow>
+  );
 }
 
-
-
 FormRow.propTypes = {
-    label: PropTypes.string,
-    error:PropTypes.any,
-    children:PropTypes.any,
-    id: PropTypes.string
-  };
-  
+  label: PropTypes.string,
+  error: PropTypes.any,
+  children: PropTypes.any,
+  id: PropTypes.string,
+};
 
-
-
-export default FormRow
+export default FormRow;
